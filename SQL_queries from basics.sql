@@ -1,0 +1,124 @@
+#First step is to create database:
+create schema farmers_market;
+#Second step is to use the database we have created:
+use farmers_market;
+#Third impoer tables for data operations using the option import table wizard and 
+#  check whether the table is imported or not using the select statement :
+select * from booth;
+select * from customer;
+select * from customer_purchases;
+select * from datetime_demo;
+select * from market_date_info;
+select * from product;
+select * from product_category;
+select * from vendor;
+select * from vendor_booth_assignments;
+select * from vendor_inventory;
+#start with the basic operation to retreive product_id and vendor_id from customer_purchases:
+select product_id,vendor_id from customer_purchases; 
+#next we can make some concat operation (concat means combining two column):
+select customer_first_name,customer_last_name ,concat( customer_first_name,' ',customer_last_name) as full_name from customer;
+#now we can use the distinct function
+# the distnct will provide us the dofferent value present in the column:
+select distinct (vendor_id) from customer_purchases;
+#next  we are going to calculate the price :
+select * ,(quantity * cost_to_customer_per_qty) as total_amount from customer_purchases;
+#order by is used to make the data in order either in the ascending or descnding
+select product_id,vendor_id,quantity from customer_purchases order by(product_id) desc;
+#similarly for the ascending oder we use the keyword asc:
+ select product_id,vendor_id,quantity from customer_purchases order by(product_id) asc;
+#now we are going to see group by function:
+select product_id, count(vendor_id) from customer_purchases group by product_id;
+#now we are going to work on aggregrate function there are five aggregrate are there they are:
+#1.max,2.min,3.avg,4,count ,5.sum
+#max() is used to find the highest value in column:
+select max(original_price) from vendor_inventory;
+#min () function is similar to that only:
+select min(original_price) from vendor_inventory;
+#avg() is used to calculate average value from the column:
+select avg(original_price) from vendor_inventory;
+#count() its used to count the number of values present on the columnn:
+select count(product_id) from vendor_inventory;
+#sum() is used to get the  sum value of the column:
+select sum(original_price) from vendor_inventory;
+#Sub queries one of the most important topic is sub queries(the sub queries the query is written inside the another inside)
+select product_id,vendor_id,quantity from customer_purchases where quantity >(select avg(quantity) from customer_purchases);
+#from the above query we have two statements first one tells us to get three column from customer_purchases table 
+#the thing first one is main query the values present in the main query only will be retrieved second is to provide the condition 
+#next we are going to see about limit and offset 
+select product_id,vendor_id,quantity from customer_purchases order by quantity desc limit 5 offset 1;
+#next we are going to see on case statments the case statements are simple 
+select max(quantity)  from customer_purchases;
+select product_id,vendor_id,case when quantity < 1 then "class 1"
+when quantity between 1 and 2 then "class 2"
+when quantity between 2 and 3 then "class 3"
+when quantity between 3 and 4 then "class 4"
+when quantity between 4 and 5 then "class 5"
+when quantity between 5 and 6 then "class 6"
+when quantity between 6 and 7 then "class 7"
+when quantity between 7 and 8 then "class 8"
+ end as customer_class from customer_purchases order by(customer_class) ;
+ #the next topic will be joins 
+#JOIN is a command clause that combines records from two or more tables in a database. It is a means of combining data in fields from two tables by using values common to each table.
+#there are about four types oof joins they are 1.inner join,2.left join ,3.right join ,4.full join
+#first start with left join(the left join means common column from two table and the column all present in the left side table will bbe retrieved):
+select * from customer_purchases as cp
+left join vendor as vc
+on cp.vendor_id=vc.vendor_id;
+#now the right join the join are similarly from right side table all columns will bbe retrieved :
+select * from vendor_booth_assignments as vba 
+right join vendor as v
+on vba.vendor_id=v.vendor_id;
+#now the inner join (the common column on both the tables will be retreived)
+select * from vendor_booth_assignments as vba 
+inner join vendor as v
+on vba.vendor_id=v.vendor_id;
+#next is union (the union will combine two or more select statements):
+select * from  vendor_inventory
+union 
+select * from vendor ;
+#similarly the union all 
+select * from vendor
+union all
+select * from vendor_inventory;
+#intersect operation 
+select product_id from customer_purchases
+intersect 
+ product_id from product; 
+ #views :
+ create view customer as
+ select concat(customer_first_name,' ' ,customer_last_name) as full_name ,
+ customer_id
+ from customer;
+ #CTE(common table expression):
+ select 
+ customer_id,
+ customer_first_name,
+ customer_last_name,
+ rank() over order by customer_id as cust_id
+ from customer;
+ #stored procedure :
+ create procedure customer_info (in customer_id int)
+ #Delimiter//
+ create procedure customer_id(In customer_id int)
+ begin 
+ select * from customer;
+ #End//
+ #Delimiter//
+ call cust_id()
+ #Indexes Indexes are special lookup tables that need to be used by the database search engine to speed up data retrieval
+ create index idx customer_last_name on customer(customer_last_name);
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
